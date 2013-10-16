@@ -1,0 +1,1 @@
+delete [Select Id From Opportunity];
