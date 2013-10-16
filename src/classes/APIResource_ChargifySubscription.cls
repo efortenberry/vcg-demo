@@ -12,7 +12,7 @@ global class APIResource_ChargifySubscription {
         RestResponse res = RestContext.response;
         String resBody = '';
         String event = req.params.get('event');
-        if(event == 'renewal_failure') {
+        if(event == 'payment_success') {
             String subscriptionId = req.params.get('payload[subscription][id]');
             Subscription__c sfSubscription = [
                 SELECT Id, Name
