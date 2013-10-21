@@ -6,3 +6,4 @@ DS_Store
 config/*
 session/*
 notes/*
+apex-scripts/*
