@@ -16,20 +16,27 @@ global class APIResource_ChargifySubscription {
         String key = 'x7x82snTo7lCgy7DhsI';
         Blob sigCalculated = Crypto.generateMac('hmacSHA256', req.requestBody, Blob.valueOf(key));
 
-        if(true || sigReceived == EncodingUtil.convertToHex(sigCalculated)) {
-            String resBody = '';
-            String event = req.params.get('event');
-            if(event == 'payment_failure') {
-                String subscriptionId = req.params.get('payload[subscription][id]');
-                Subscription__c sfSubscription = [
-                    SELECT Id, Name
-                    FROM Subscription__c
-                    WHERE Chargify_ID__c = :subscriptionId
-                ];
-                sfSubscription.Status__c = 'Inactive';
-                update sfSubscription;
-            }
-        } 
+        System.debug('## Request body raw: ' + req.requestBody.toString());
+        System.debug('## Request URI: ' + req.requestURI);
+        // System.debug('## Params: ' + req.params);
+        System.debug('## Signature from Chargify: ' + sigReceived);
+        System.debug('## Site key: ' + key);
+        System.debug('## Calculated signature: ' + EncodingUtil.convertToHex(sigCalculated));
+
+        // if(true || sigReceived == EncodingUtil.convertToHex(sigCalculated)) {
+        //     String resBody = '';
+        //     // String event = req.params.get('event');
+        //     if(event == 'payment_failure') {
+        //         // String subscriptionId = req.params.get('payload[subscription][id]');
+        //         Subscription__c sfSubscription = [
+        //             SELECT Id, Name
+        //             FROM Subscription__c
+        //             WHERE Chargify_ID__c = :subscriptionId
+        //         ];
+        //         sfSubscription.Status__c = 'Inactive';
+        //         update sfSubscription;
+        //     }
+        // } 
     }
 
 
