@@ -5,3 +5,4 @@ DS_Store
 *.sublime-project
 config/*
 session/*
+notes/*
