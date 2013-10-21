@@ -1,6 +1,9 @@
 /**
  * Retrieve list of webhooks that have been sent from Chargify via the 
  * API.
+ *
+ * Chargify doc:
+ * http://docs.chargify.com/api-webhooks
  * 
  * @author  Luke
  * @date    Oct 2013
@@ -29,7 +32,4 @@ public with sharing class ChargifyWebhookEngine {
 
         return webhooks;
     }
-
-
-
 }
