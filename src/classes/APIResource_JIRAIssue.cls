@@ -9,12 +9,7 @@ global class APIResource_JIRAIssue {
         RestResponse res = RestContext.response;
 
         try {
-            //System.debug(req.requestBody.toString());
             JIRAIssue newIssue = JIRAIssue.parse(req.requestBody.toString());
-            
-            // FeedItem post = new FeedItem();
-            // post.Body = 'New Issue : ' + newIssue.issue.fields.summary + ' - ' + newIssue.issue.fields.description;
-            // insert post;
 
             Case newCase = new Case(
                     Origin = 'Web - JIRA',
@@ -38,16 +33,5 @@ global class APIResource_JIRAIssue {
         res.statusCode = 200;
     }
  
-    // @IsTest
-    // static void test1() {
-    //     RestRequest req = new RestRequest();
-    //     RestResponse res = new RestResponse();
-    //     req.params.put('param1', 'test');
- 
-    //     RestContext.request = req;
-    //     RestContext.response = res;
- 
-    //     JIRANewIssueHandler.doGet();
-    // }
  
 }
