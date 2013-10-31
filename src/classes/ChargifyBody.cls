@@ -38,11 +38,11 @@ public with sharing class ChargifyBody {
     }
 
     public Boolean verifySignature(String siteKey, String signature) {
-        String mySig = calculateSignature(siteKey, signature);
+        String mySig = calculateSignature(siteKey);
         return mySig == signature;
     }
 
-    public String calculateSignature(String siteKey, String signature) {
+    public String calculateSignature(String siteKey) {
         Blob mySigBlob  = Crypto.generateMac(
             'hmacSHA256', 
             Blob.valueOf(this.bodyRaw),

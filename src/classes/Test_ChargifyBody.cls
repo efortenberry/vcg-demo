@@ -268,10 +268,10 @@
             'payload[subscription][product][product_family][name]' => 'Cloud Software'
         };
 
-        ChargifyBody chargifyBody = new ChargifyBody(rawBody);
+        ChargifyBody chargifyBody = new ChargifyBody(bodyAsMap);
         String siteKey = 'x7x82snTo7lCgy7DhsI';
         String expectedSig = '15511ac0a58da0a087d6859cc06e8ce283ee16929fe04196210d69573e9dc24a';
-        System.assertEquals('15511ac0a58da0a087d6859cc06e8ce283ee16929fe04196210d69573e9dc24a', chargifyBody.calculateSignature(siteKey, expectedSig), 'Incorrect calculated signature');
+        System.assertEquals('15511ac0a58da0a087d6859cc06e8ce283ee16929fe04196210d69573e9dc24a', chargifyBody.calculateSignature(siteKey), 'Incorrect calculated signature');
         System.assertEquals(true, chargifyBody.verifySignature(siteKey, expectedSig), 'Expecting signature verification to be successful');
     }
 }
