@@ -24,6 +24,11 @@ global class APIResource_ChargifySubscription {
             update sfSubscription;
         }
 
+
+  
+
+
+
         res.statusCode = 200;
     }
 
@@ -35,14 +40,15 @@ global class APIResource_ChargifySubscription {
     public class ChargifyWebhookException extends Exception {}
 
     private static final String site = 'vcg-demo';
-    private static final String shared_key = 'uuZcb3H1fpVz5OhRBv7H'; //Note: for prod, should be a Custom Setting
+    private static final String api_key = 'uuZcb3H1fpVz5OhRBv7H'; //Note: for prod, should be a Custom Setting
+    private static final String site_shared_key = 'x7x82snTo7lCgy7DhsI'; //Note: for prod, should be a Custom Setting
 
     
     private static List<ChargifyWebhook> getListFromChargify() {
         HttpRequest req = new HttpRequest();
         req.setEndpoint('https://' + site + '.chargify.com/webhooks.json');
         req.setMethod('GET');
-        String authString = shared_key + ':x';
+        String authString = api_key + ':x';
         String encodedAuth = EncodingUtil.base64encode(Blob.valueOf(authString));
         req.setHeader('Authorization', encodedAuth);
         HttpResponse res = (new Http()).send(req);
