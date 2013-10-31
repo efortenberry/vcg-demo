@@ -7,3 +7,4 @@ config/*
 session/*
 notes/*
 apex-scripts/*
+mm.log
