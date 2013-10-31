@@ -7,32 +7,56 @@
 @RestResource(urlMapping='/subscriptionhandler') 
 global class APIResource_ChargifySubscription {
 
+    // @HttpPost
+    // global static void handlePostWithoutAuthentication() {
+    //     RestRequest req = RestContext.request;
+    //     RestResponse res = RestContext.response;
+
+    //     String event = req.params.get('event');
+    //     if(event == 'payment_failure') {
+    //         String subscriptionId = req.params.get('payload[subscription][id]');
+    //         Subscription__c sfSubscription = [
+    //             SELECT Id, Name
+    //             FROM Subscription__c
+    //             WHERE Chargify_ID__c = :subscriptionId
+    //         ];
+    //         sfSubscription.Status__c = 'Inactive';
+    //         update sfSubscription;
+    //     }
+    //     res.statusCode = 200;
+        
+    // }
+
+      
     @HttpPost
-    global static void handlePostWithoutAuthentication() {
+    global static void handlePostWithAuthentication() {
         RestRequest req = RestContext.request;
         RestResponse res = RestContext.response;
 
-        String event = req.params.get('event');
-        if(event == 'payment_failure') {
-            String subscriptionId = req.params.get('payload[subscription][id]');
-            Subscription__c sfSubscription = [
-                SELECT Id, Name
-                FROM Subscription__c
-                WHERE Chargify_ID__c = :subscriptionId
-            ];
-            sfSubscription.Status__c = 'Inactive';
-            update sfSubscription;
+        if(verifyChargifyHook(req)) {
+
+            // ********** ORIGINAL WORK BEGINS ************ //
+            String event = req.params.get('event');
+            if(event == 'payment_failure') {
+                String subscriptionId = req.params.get('payload[subscription][id]');
+                Subscription__c sfSubscription = [
+                    SELECT Id, Name
+                    FROM Subscription__c
+                    WHERE Chargify_ID__c = :subscriptionId
+                ];
+                sfSubscription.Status__c = 'Inactive';
+                update sfSubscription;
+            }
+            // ********** ORIGINAL WORK ENDS ************** //
+
+            res.statusCode = 200; //Accepted
         }
-
-
-  
-
-
-
-        res.statusCode = 200;
+        else {
+            res.statusCode = 401;//Unauthorized
+        }
     }
+     
 
-    
 
 
     // ************* AUTHENTICATION SECTION BEGINS  ******************** //
@@ -72,48 +96,18 @@ global class APIResource_ChargifySubscription {
     }
 
     private static boolean verifyChargifyHook(RestRequest req) {  
-        ChargifyWebhook hookFromServer = getMapFromChargify().get(req.params.get('id'));
         String sigReceived = req.headers.get('X-Chargify-Webhook-Signature-Hmac-Sha-256');
 
-        if(hookFromServer == null) {
-            System.debug('Invalid - no hooks');
-            return false;
-        }
-        if(hookFromServer.webhook.signature_hmac_sha_256 != sigReceived) {
-            System.debug('Invalid - signature mismatch: Server: \"' + hookFromServer.webhook.signature_hmac_sha_256 +'\" ; Received: \"' + sigReceived + '\"');
+        ChargifyBody bodyObj = new ChargifyBody(req.params);
+        String calcSignature = bodyObj.calculateSignature(site_shared_key);
+
+        if(calcSignature != sigReceived) {
+            System.debug('Invalid - signature mismatch: Calculated: \"' + calcSignature +'\" ; Received: \"' + sigReceived + '\"');
             return false;
         }
         return true;
     }
 
-    /*  
-    @HttpPost
-    global static void handlePostWithAuthentication() {
-        RestRequest req = RestContext.request;
-        RestResponse res = RestContext.response;
-
-        if(verifyChargifyHook(req)) {
-
-            // ********** ORIGINAL WORK BEGINS ************ //
-            String event = req.params.get('event');
-            if(event == 'payment_failure') {
-                String subscriptionId = req.params.get('payload[subscription][id]');
-                Subscription__c sfSubscription = [
-                    SELECT Id, Name
-                    FROM Subscription__c
-                    WHERE Chargify_ID__c = :subscriptionId
-                ];
-                sfSubscription.Status__c = 'Inactive';
-                update sfSubscription;
-            }
-            // ********** ORIGINAL WORK ENDS ************** //
-
-            res.statusCode = 200; //Accepted
-        }
-        else {
-            res.statusCode = 401;//Unauthorized
-        }
-    }
-     */
+    
 
 }
