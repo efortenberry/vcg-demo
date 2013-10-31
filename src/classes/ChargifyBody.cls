@@ -17,10 +17,18 @@ public with sharing class ChargifyBody {
         this.bodyRaw = getRaw();
 	}
 
-    public ChargifyBody(String rawBody) {
-        this.bodyRaw = rawBody;
+    public String calculateSignature(String siteKey) {
+        Blob mySigBlob  = Crypto.generateMac(
+            'hmacSHA256', 
+            Blob.valueOf(this.bodyRaw),
+            Blob.valueOf(siteKey)
+        );
+        return EncodingUtil.convertToHex(mySigBlob);
     }
-
+    
+    
+    
+    
     private String getRaw() {
         if(this.bodyRaw != null) return this.bodyRaw;
         else {
@@ -40,15 +48,6 @@ public with sharing class ChargifyBody {
     public Boolean verifySignature(String siteKey, String signature) {
         String mySig = calculateSignature(siteKey);
         return mySig == signature;
-    }
-
-    public String calculateSignature(String siteKey) {
-        Blob mySigBlob  = Crypto.generateMac(
-            'hmacSHA256', 
-            Blob.valueOf(this.bodyRaw),
-            Blob.valueOf(siteKey)
-        );
-        return EncodingUtil.convertToHex(mySigBlob);
     }
 
     private static final List<String> expectedKeyOrder = new List<String> {
