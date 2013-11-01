@@ -67,38 +67,12 @@ global class APIResource_ChargifySubscription {
     private static final String api_key = 'uuZcb3H1fpVz5OhRBv7H'; //Note: for prod, should be a Custom Setting
     private static final String site_shared_key = 'x7x82snTo7lCgy7DhsI'; //Note: for prod, should be a Custom Setting
 
-    
-    private static List<ChargifyWebhook> getListFromChargify() {
-        HttpRequest req = new HttpRequest();
-        req.setEndpoint('https://' + site + '.chargify.com/webhooks.json');
-        req.setMethod('GET');
-        String authString = api_key + ':x';
-        String encodedAuth = EncodingUtil.base64encode(Blob.valueOf(authString));
-        req.setHeader('Authorization', encodedAuth);
-        HttpResponse res = (new Http()).send(req);
-
-        List<ChargifyWebhook> webhooks;
-        if(res.getStatusCode() == 200) { // success
-            webhooks = (List<ChargifyWebhook>)JSON.deserialize(res.getBody(), List<ChargifyWebhook>.class);
-        } else {
-            throw new ChargifyWebhookException('Failed to retrieve webhooks from Chargify: ' + res.getStatus());
-        }
-
-        return webhooks;
-    }
-
-    private static Map<String,ChargifyWebhook> getMapFromChargify() {
-        Map<String,ChargifyWebhook> hookMap = new Map<String,ChargifyWebhook>();
-        for(ChargifyWebhook hook : getListFromChargify()) {
-            hookMap.put(hook.webhook.id,hook);
-        }
-        return hookMap;
-    }
 
     private static boolean verifyChargifyHook(RestRequest req) {  
         String sigReceived = req.headers.get('X-Chargify-Webhook-Signature-Hmac-Sha-256');
 
         ChargifyBody bodyObj = new ChargifyBody(req.params);
+        
         String calcSignature = bodyObj.calculateSignature(site_shared_key);
 
         if(calcSignature != sigReceived) {
