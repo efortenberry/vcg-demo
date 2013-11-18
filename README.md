@@ -45,7 +45,7 @@ global class APIResource_YourResourceName {
     // indicating that we will create something in Salesforce from the 
     // payload sent.
     @HttpPost
-    global static void postIssue() {
+    global static void postHandler() {
         //The RestRequest object contains useful information about the
         // request received from the outside world
         RestRequest req = RestContext.request;
@@ -177,3 +177,4 @@ catch (Exception e) {
 }
 [...]
 ~~~
+
