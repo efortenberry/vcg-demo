@@ -1,6 +1,11 @@
+/**
+ * Handle incoming webhook events from JIRA relating to issues.
+ * Reachable via: https://vcgdev1-developer-edition.ap1.force.com/services/apexrest/jira/issue
+ * 
+ * @author  James
+ * @date    Oct 2013
+ */
 @RestResource(urlMapping='/jira/issue/*') 
-//Endpoint is therefore https://[instance].salesforce.com/[path]/services/apexrest/jira/issue
-// => https://vcgdev1-developer-edition.ap1.force.com/services/apexrest/jira/issue
 global class APIResource_JIRAIssue {
 
     @HttpPost

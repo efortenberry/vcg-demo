@@ -7,35 +7,15 @@
 @RestResource(urlMapping='/subscriptionhandler') 
 global class APIResource_ChargifySubscription {
 
-    // @HttpPost
-    // global static void handlePostWithoutAuthentication() {
-    //     RestRequest req = RestContext.request;
-    //     RestResponse res = RestContext.response;
-
-    //     String event = req.params.get('event');
-    //     if(event == 'payment_failure') {
-    //         String subscriptionId = req.params.get('payload[subscription][id]');
-    //         Subscription__c sfSubscription = [
-    //             SELECT Id, Name
-    //             FROM Subscription__c
-    //             WHERE Chargify_ID__c = :subscriptionId
-    //         ];
-    //         sfSubscription.Status__c = 'Inactive';
-    //         update sfSubscription;
-    //     }
-    //     res.statusCode = 200;
-        
-    // }
-
       
     @HttpPost
-    global static void handlePostWithAuthentication() {
+    global static void handlePost() {
         RestRequest req = RestContext.request;
         RestResponse res = RestContext.response;
 
-        if(verifyChargifyHook(req)) {
+        //Uncomment the below to enable verification of payloads
+        //if(verifyChargifyHook(req)) {
 
-            // ********** ORIGINAL WORK BEGINS ************ //
             String event = req.params.get('event');
             if(event == 'payment_failure') {
                 String subscriptionId = req.params.get('payload[subscription][id]');
@@ -47,13 +27,14 @@ global class APIResource_ChargifySubscription {
                 sfSubscription.Status__c = 'Inactive';
                 update sfSubscription;
             }
-            // ********** ORIGINAL WORK ENDS ************** //
 
             res.statusCode = 200; //Accepted
-        }
-        else {
-            res.statusCode = 401;//Unauthorized
-        }
+            
+        //Uncomment the below to enable verification of payloads
+        // }
+        // else {
+        //     res.statusCode = 401;//Unauthorized
+        // }
     }
      
 
