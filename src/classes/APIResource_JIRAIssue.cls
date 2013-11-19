@@ -5,7 +5,7 @@
  * @author  James
  * @date    Oct 2013
  */
-@RestResource(urlMapping='/jira/issue/*') 
+@RestResource(urlMapping='/jira/issue') 
 global class APIResource_JIRAIssue {
 
     @HttpPost

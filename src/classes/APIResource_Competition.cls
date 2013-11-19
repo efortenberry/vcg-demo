@@ -7,7 +7,7 @@
  * @author  Luke
  * @date    Oct 2013
  */
-@RestResource(urlMapping='/hitme/*') 
+@RestResource(urlMapping='/hitme') 
 global class APIResource_Competition {
     @HttpGet
     global static void doGet() {
