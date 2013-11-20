@@ -13,7 +13,7 @@ Demonstrates basic intregration with Chargify & JIRA via webhook handlers built 
 ### In Words
 
 _Note that this guide is not for a particular service, though does reference
-some. If you have any problems, feel free to post an issue, or <a href="https://twitter.com/intent/tweet?screen_name=Oblongmana" class="twitter-mention-button" data-related="Oblongmana,lukem">ping James (Oblongmana) and Luke (lukemcf) on Twitter</a>)
+some. If you have any problems, feel free to post an issue, or_ <a href="https://twitter.com/intent/tweet?screen_name=Oblongmana" class="twitter-mention-button" data-related="Oblongmana,lukem">_ping James (Oblongmana) and Luke (lukemcf) on Twitter_</a>
 
 #### Set up a Force.com Site
 
