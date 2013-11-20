@@ -183,4 +183,103 @@ catch (Exception e) {
 ~~~
 
 
+#### Authentication
 
+You might recall from the presentation at Dreamforce that we discussed 3 
+different forms of authenticating the anonymous data you receive. Note that 
+there are only code samples for method 3 at the moment. If you'd like samples 
+for the first two, let us know and we'll see about putting somthing together.
+
+Unfortunately, with webhooks being an emerging standard, there is no standard method for authentication, so please **read the docs** closely
+
+Note also that these are not necessarily mutually exclusive, or exhaustive.
+In particular, note that the **Check received data against the API** section
+also provides a way to guard against replay attacks.
+
+##### Check received data against the API
+
+In terms of providers who make webhooks available, we have yet to come across
+any who don't also provide a general use API. As such, this pattern can be
+fairly reliably implemented.
+
+The basic idea is to identify what the important content from the webhook 
+payload is. What data is being either used by your code in decision making,
+or being in some way persisted to the database. Once you have identified this, you now need to work out how to obtain this information from the API. This will
+often be only a single API resource you need to deal with, so should be 
+relatively simple, but be cautious.
+
+Now when you receive a new webhook payload, before executing any important 
+code, you'll first call the provider's API to get the corresponding records on
+their servers, and then compare the important data received against the data
+as recorded on their servers. If they match, continue processing, otherwise
+reject in an appropriate manner (such as a `401 Unauthorized` status code)
+
+Note that you may run into trouble with DELETE requests (or more likely POST
+requests indicating that a resource was deleted by the provider), 
+as the resource may
+no longer exist on the provider. Some providers may maintain a temporary "bin"
+you can check against. Others (like Chargify) maintain a record of every 
+webhook event and the information in it, which can be obtained by hitting a
+"/webhooks" endpoints. As such, a sufficient check might be 
+to check their API to ensure the resource doesn't exist on their servers, and
+that a delete webhook for the resource was sent with matching data.
+
+Suppose you set up an endpoint intended to consume Chargify payment_success
+and payment_failure events, where the only effects on the database are to 
+toggle the Active/Inactive field on a subscription object in Salesforce.
+
+When you receive a webhook event for one of these events, you can hit their
+["/subscriptions/[Subscription_number]"](http://docs.chargify.com/api-subscriptions) endpoint to check that the data received matches the server record.
+
+While this does involve extra http communication, the calls back and forth
+are relatively lightweight when compared to the effort required for polling.
+
+##### Message Encryption
+
+AES encryption would be a relatively sensible way to do things if possible,
+however we have yet to find anyone who uses this. Mailup uses RC4 encryption,
+however Salesforce does not support this, so you would need to examine a hybrid
+solution in a situation like that (such as a Heroku "middle-man" that checks
+for authenticity before passing the decrypted information on to Salesforce).
+
+##### Message Signing
+
+This is starting to become an accepted, standard way of providing security for 
+webhooks, with a number of providers (such as Chargify and Shopify) using this
+method. 
+
+This method involves a shared secret that only you and the provider know - this
+should be stored in Salesforce using a Custom Setting, and treated like a 
+password. If compromised, you should contact the provider to have another key generated.
+
+The provider will use this shared key on their side to calculate a Message
+Authentication Code (or "MAC") over the body of the webhook, and will then
+include that as a header, e.g. X-Chargify-Webhook-Signature-Hmac-Sha-256.
+
+On the Apex side, before processing, you should extract the signature and body
+out of the `RestRequest` object, then using the Shared Key and body, calculate
+the signature yourself using the `Crypto.generateMac(...)` static method,
+which takes the algorithm name (hmacSHA256 in the case of Chargify and Shopify), the body as a Blob, and the key as a blob. You conver this to hex
+using `EncodingUtil.convertToHex`, and then compare the two signatures.
+So you might write a verification method that looks something like this:
+
+~~~ java
+public Boolean verifyWebhook(RestRequest req) {
+    String sigReceived = req.headers.get('X-Chargify-Webhook-Signature-Hmac-Sha-256');
+    String sharedKey = 'x7x82snTo7lCgy7DhsI'; //This should be in a custom setting
+
+    Blob mySigBlob  = Crypto.generateMac(
+        'hmacSHA256', 
+        Blob.valueOf(req.requestBody.toString()),
+        Blob.valueOf(sharedKey)
+    );
+
+    String mySig = EncodingUtil.convertToHex(mySigBlob);
+
+    if(mySig != sigReceived) {
+        return false; //Signatures do not match, not verified
+    }
+
+    return true; //Signatures match, verified
+
+}
