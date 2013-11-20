@@ -12,11 +12,14 @@ Demonstrates basic intregration with Chargify & JIRA via webhook handlers built 
 
 ### In Words
 
+_Note that this guide is not for a particular service, though does reference
+some. If you have any problems, feel free to post an issue, or <a href="https://twitter.com/intent/tweet?screen_name=Oblongmana" class="twitter-mention-button" data-related="Oblongmana,lukem">ping James (Oblongmana) and Luke (lukemcf) on Twitter</a>)
+
 #### Set up a Force.com Site
 
 Follow the instructions at http://wiki.developerforce.com/page/An_Introduction_to_Force.com_Sites, customising as desired, until you reach "Assigning a Visualforce Page", at which point you should stop and ensure you have activated your Force.com Site.
 
-#### Create the endpoint for the external service to call with webhooks
+#### Create and expose a basic anonymous endpoint
 
 Create a new Apex Class for your resource, named `APIResource_[YourResourceName]`. For example, if we want an external service to be able to send JIRA Issues to us, we could call the class `APIResource_JIRAIssue`.
 
@@ -87,12 +90,13 @@ http://www.hurl.it/ instead. The endpoint should be
 https://[your-force-sitename].force.com/services/apexrest/path/to/endpoint
 depending on what you've changed in your `@RestResource(urlMapping)`.
 
+#### JSON Processing
+
 Now you'll want to add some more sophisticated processing - at the moment we
 only acknowledge that we've received the request.
 
 If the external service you're integrating with sends JSON, their documentation
-should include a sample of the post that they'll send to you. Here's a fictional
-example json object wrapping up info about a new Case:
+should include a sample of the post that they'll send to you. Here's a fictional example json object wrapping up info about a new Case:
 
 ~~~ json
 {
@@ -177,4 +181,6 @@ catch (Exception e) {
 }
 [...]
 ~~~
+
+
 

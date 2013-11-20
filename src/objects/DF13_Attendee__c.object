@@ -42,7 +42,7 @@
         <externalId>false</externalId>
         <label>First Name</label>
         <length>255</length>
-        <required>false</required>
+        <required>true</required>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -51,7 +51,7 @@
         <externalId>false</externalId>
         <formula>First_Name__c &amp; &quot; &quot; &amp; Name</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-        <label>Full_Name</label>
+        <label>Full Name</label>
         <required>false</required>
         <type>Text</type>
         <unique>false</unique>
@@ -59,6 +59,7 @@
     <label>DF13 Attendee</label>
     <listViews>
         <fullName>All</fullName>
+        <columns>Full_Name__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>

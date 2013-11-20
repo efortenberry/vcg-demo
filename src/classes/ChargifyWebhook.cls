@@ -11,6 +11,7 @@ public class ChargifyWebhook {
         public String created_at;
         public String body;
         public String signature;
+        public String signature_hmac_sha_256; //Not included in doc, added by hand
         public Boolean successful;
         public String last_error;
         public String id;
@@ -19,11 +20,11 @@ public class ChargifyWebhook {
     }
 
     public Webhook webhook;
-
     
     public static ChargifyWebhook parse(String json) {
         return (ChargifyWebhook) System.JSON.deserialize(json, ChargifyWebhook.class);
     }
+
     
     static testMethod void testParse() {
         String json = '{'+
