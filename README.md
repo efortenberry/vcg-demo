@@ -4,6 +4,19 @@ This repo contains code used for live demo in the presentation "Integrating with
 
 Demonstrates basic intregration with Chargify & JIRA via webhook handlers built using Apex REST in Force.com.
 
+**README Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [The Entire Process](#the-entire-process)
+    - [In Picture Form](#in-picture-form)
+    - [In Words](#in-words)
+        - [Set up a Force.com Site](#set-up-a-forcecom-site)
+        - [Create and expose a basic anonymous endpoint](#create-and-expose-a-basic-anonymous-endpoint)
+        - [JSON Processing](#json-processing)
+        - [Authentication](#authentication)
+            - [Check received data against the API](#check-received-data-against-the-api)
+            - [Message Encryption](#message-encryption)
+            - [Message Signing](#message-signing)
+
 ## The Entire Process
 
 ### In Picture Form
